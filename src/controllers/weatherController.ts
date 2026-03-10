@@ -1,35 +1,14 @@
 import { Request, Response } from 'express';
-import { getCache, setCache } from '../utils/cache';
+import { getWeatherByCity } from '../services/weatherService';
 
 export const getCurrentWeather = async (req: Request, res: Response) => {
   const city = req.query.city as string;
+  if (!city) return res.status(400).json({ error: 'City is required' });
 
-  if (!city) {
-    return res.status(400).json({ error: 'City is required' });
+  try {
+    const result = await getWeatherByCity(city);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
-
-  const cacheKey = `weather:${city}`;
-
-  const cachedData = await getCache(cacheKey);
-
-  if (cachedData) {
-    return res.json({
-      source: 'cache',
-      data: cachedData,
-    });
-  }
-
-  // временный mock
-  const mockWeather = {
-    city,
-    temperature: 20,
-    condition: 'Sunny',
-  };
-
-  await setCache(cacheKey, mockWeather, Number(process.env.CACHE_TTL));
-
-  res.json({
-    source: 'mock',
-    data: mockWeather,
-  });
 };
