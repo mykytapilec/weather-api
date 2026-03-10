@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import weatherRoutes from './routes/weatherRoutes';
+import { connectRedis } from './utils/redisClient';
 
 dotenv.config();
 
@@ -10,6 +11,13 @@ app.use(express.json());
 app.use('/weather', weatherRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Weather API running on port ${PORT}`);
-});
+
+const startServer = async () => {
+  await connectRedis();
+
+  app.listen(PORT, () => {
+    console.log(`Weather API running on port ${PORT}`);
+  });
+};
+
+startServer();
