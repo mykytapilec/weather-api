@@ -162,3 +162,6 @@ src/
 * Redis caching ensures repeated requests are **fast** and do not hit the API unnecessarily.
 * The `source` field indicates where the data came from: `"service"` for fresh data, `"cache"` if returned from Redis.
 
+## Project link
+https://roadmap.sh/projects/weather-api-wrapper-service
+
