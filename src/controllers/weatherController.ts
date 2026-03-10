@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getWeatherByCity } from '../services/weatherService';
+import { getWeatherByCity, getForecastByCity } from '../services/weatherService';
 
 export const getCurrentWeather = async (req: Request, res: Response) => {
   const city = req.query.city as string;
@@ -7,6 +7,19 @@ export const getCurrentWeather = async (req: Request, res: Response) => {
 
   try {
     const result = await getWeatherByCity(city);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+export const getWeatherForecast = async (req: Request, res: Response) => {
+  const city = req.query.city as string;
+  const days = Number(req.query.days) || 3;
+  if (!city) return res.status(400).json({ error: 'City is required' });
+
+  try {
+    const result = await getForecastByCity(city, days);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
